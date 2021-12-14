@@ -10,9 +10,13 @@ import android.widget.Toast;
 
 import com.example.myapplication.R;
 import com.example.myapplication.mvp.MainMVP;
+import com.example.myapplication.presenter.MainPresenter;
 import com.example.myapplication.view.adapter.TaskAdapter;
+import com.example.myapplication.view.dto.TaskItem;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainMVP.View {
 
@@ -22,12 +26,17 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
 
     private TaskAdapter taskAdapter;
 
+    private MainMVP.Presenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        presenter = new MainPresenter(MainActivity.this);
+
         initUI();
+        presenter.loadTask();
     }
 
     private void initUI() {
@@ -43,5 +52,10 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
         rvTasks = findViewById(R.id.rv_tasks);
         rvTasks.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         rvTasks.setAdapter(taskAdapter);
+    }
+
+    @Override
+    public void showTaskList(List<TaskItem> items) {
+        taskAdapter.setData(items);
     }
 }
