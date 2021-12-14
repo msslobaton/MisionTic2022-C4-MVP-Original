@@ -9,11 +9,12 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
+import com.example.myapplication.mvp.MainMVP;
 import com.example.myapplication.view.adapter.TaskAdapter;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainMVP.View {
 
     private TextInputLayout tilNewTask;
     private TextInputEditText etNewTask;
