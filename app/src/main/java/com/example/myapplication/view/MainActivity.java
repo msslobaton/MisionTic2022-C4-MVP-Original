@@ -1,10 +1,12 @@
 package com.example.myapplication.view;
 
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -41,14 +43,13 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
 
     private void initUI() {
         tilNewTask = findViewById(R.id.til_new_task);
-        tilNewTask.setEndIconOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Add new task to list", Toast.LENGTH_SHORT)
-                    .show();
-        });
+        tilNewTask.setEndIconOnClickListener(v -> presenter.addNewTask());
 
         etNewTask = findViewById(R.id.et_new_task);
-
         taskAdapter = new TaskAdapter();
+        taskAdapter.setClickListener(item -> presenter.taskItemClicked(item));
+        taskAdapter.setLongClickListener(item -> presenter.taskItemLongClicked(item));
+
         rvTasks = findViewById(R.id.rv_tasks);
         rvTasks.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         rvTasks.setAdapter(taskAdapter);
@@ -57,5 +58,49 @@ public class MainActivity extends AppCompatActivity implements MainMVP.View {
     @Override
     public void showTaskList(List<TaskItem> items) {
         taskAdapter.setData(items);
+    }
+
+    @Override
+    public String getTaskDescription() {
+        return etNewTask.getText().toString();
+    }
+
+    @Override
+    public void addTaskToList(TaskItem task) {
+        taskAdapter.addItem(task);
+    }
+
+    @Override
+    public void updateTask(TaskItem task) {
+        taskAdapter.updateTask(task);
+    }
+
+    @Override
+    public void showConfirmDialog(String message,TaskItem task) {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Task Selected")
+                .setMessage(message)
+                .setPositiveButton("yes",(dialog, which) -> presenter.updateTask(task))
+                .setNegativeButton("No", null)
+                .show();
+
+    }
+
+    @Override
+    public void showDeleteDialog(String message, TaskItem task) {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Task Selected")
+                .setMessage(message)
+                .setPositiveButton("yes",(dialog, which) -> presenter.deleteTask(task))
+                .setNegativeButton("No", null)
+                .show();
+
+    }
+
+    @Override
+    public void deleteTask(TaskItem task) {
+        taskAdapter.removeTask(task);
     }
 }
